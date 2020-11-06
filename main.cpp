@@ -9,30 +9,23 @@ typedef pair<int,int> pii;
 const ll mx = 1e9 + 7;
 
 int n,q;
-vector<int> callstk,depth,start,finish;
+vector<int> callstk,depth;
 vector<vector<int>> ances, adj;
 
-void build(int node, int lvl){
-    static int counter=0;
+void build(int node, int parent, int lvl){
     int cn=callstk.size();
     depth[node]=lvl;
     
-    counter++;
-    start[node]=counter;
-
     for(int i=1;i<=cn;i*=2){
         ances[node].push_back(callstk[cn-i]);
     }
 
     callstk.push_back(node);
     for(auto child: adj[node]){
-        build(child,lvl+1);
+        if(child==parent)continue;
+        build(child,node,lvl+1);
     }
     callstk.pop_back();
-
-    
-    counter++;
-    finish[node]=counter;
 }
 
 int find_k_ances(int a, int k){
@@ -65,20 +58,18 @@ void solve() {
     cin>>n>>q;
     adj.assign(n+1,vector<int>());
     ances.assign(n+1,vector<int>());
-    start.assign(n+1,0);
-    finish.assign(n+1,0);
     depth.assign(n+1,0);
 
     for(int i=2;i<=n;i++){
-        int temp;
-        cin>>temp;
+        int a,b;
+        cin>>a>>b;
 
-        adj[temp].push_back(i);
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     };
 
 
-    build(1,1);
-    string s="";
+    build(1,0,1);
     for(int i=0;i<q;i++){
         int a, b;
         cin>>a>>b;
@@ -90,11 +81,11 @@ void solve() {
         }
 
         b=find_k_ances(b,bd-ad);
-
-        // cout<<find_common(a,b)<<endl;
-        s+=to_string(find_common(a,b))+"\n";
+        int lca=find_common(a,b);
+        int dlca=depth[lca];
+        int ans=ad+bd-dlca*2;
+        cout<<ans<<endl;
     }
-    printf("%s",s.c_str());
 }
 
 int main() {
