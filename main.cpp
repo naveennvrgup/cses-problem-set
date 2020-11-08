@@ -12,60 +12,60 @@ const ll mx = 1e9 + 7;
 const int s=2e5+5;
 int n,q;
 
-vl p(s),r(s);
-
-int parent(int a){
-    if(p[a]!=a){
-        p[a]=parent(p[a]);
-    }
-    return p[a];
-}
-
-void join(ll a, ll b){
-    auto pa=parent(a);
-    auto pb=parent(b);
-
-    if(r[pa]>r[pb]){
-        p[pb]=pa;
-    }else if(r[pb]>r[pa]){
-        p[pa]=pb;
-    }else{
-        r[pa]++;
-        p[pb]=pa;
-    }
-}
-
+vl vis(s), p(s), lvl(s,s);
+vll adj(s);
 
 
 void solve() {
     ll n,m;
     cin>>n>>m;
 
-    for(int i=0;i<s;i++)p[i]=i;
-
     for(int i=0;i<m;i++){
         int a,b;
         cin>>a>>b;
-        if(parent(a)!=parent(b))join(a,b);
+        adj[a].push_back(b);
+        adj[b].push_back(a);
     }
 
-    int k=0;
-    vll ans;
-    for(int i=2;i<=n;i++){
-        if(parent(1)!=parent(i)){
-            join(1,i);
-            ans.push_back({1,i});
-            k++;
+    queue<ll> q;
+    q.push(1);
+    p[1]=0;
+    lvl[1]=1;
+
+    while(!q.empty()){
+        auto curr=q.front();
+        q.pop();
+
+        if(vis[curr])continue;
+        vis[curr]=1;
+
+        for(auto child: adj[curr]){
+            if(vis[child])continue;
+            if(lvl[child]<=lvl[curr]+1)continue;
+            lvl[child]=lvl[curr]+1;
+            p[child]=curr;
+            q.push(child);
         }
     }
 
-    cout<<k<<endl;
-    for(auto x: ans)printf("%lld %lld\n",x[0],x[1]);
+    if(lvl[n]==s){
+        cout<<"IMPOSSIBLE"<<endl;
+        return;
+    }
+
+    cout<<lvl[n]<<endl;
+    vl ans;
+    int node=n;
+    while(node!=0){
+        ans.push_back(node);
+        node=p[node];
+    }
+
+    for(auto itr=ans.rbegin();itr!=ans.rend();itr++)cout<<*itr<<" ";
+    cout<<endl;
 }
 
-// --------------------------------
-// shows WA for half the TC
-// --------------------------------
+
 int main() {
     FASTIO
     solve();

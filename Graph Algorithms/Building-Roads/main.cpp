@@ -63,9 +63,7 @@ void solve() {
     for(auto x: ans)printf("%lld %lld\n",x[0],x[1]);
 }
 
-// --------------------------------
-// shows WA for half the TC
-// --------------------------------
+
 int main() {
     FASTIO
     solve();
