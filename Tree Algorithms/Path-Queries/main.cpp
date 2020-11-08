@@ -78,7 +78,7 @@ void solve() {
         ll type;
         cin>>type;
         if(type==1){
-            ll i,x; 
+            ll i,x;
             cin>>i>>x;
             st->update(1,0,n-1,start[i],finish[i],x-val[i]);
         }else{

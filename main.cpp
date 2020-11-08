@@ -4,92 +4,68 @@ using namespace std;
 
 typedef long long ll;
 typedef pair<ll, ll> pll;
-typedef pair<int,int> pii;
+typedef vector<ll>  vl;
+typedef vector<vl>  vll;
 
 const ll mx = 1e9 + 7;
 
 const int s=2e5+5;
 int n,q;
-vector<ll> arr, psum(s), val(s), start(s), finish(s);
-vector<vector<ll>> adj(s);
 
-class ST{
-    vector<ll> t;
-    int n;
-public:
-    ST(vector<ll> arr){
-        n=arr.size();
-        t.assign(n*4,0);
+vl p(s),r(s);
+
+int parent(int a){
+    if(p[a]!=a){
+        p[a]=parent(p[a]);
     }
-
-
-    ll sum(int i, int tl, int tr, int pos){
-        if(tl==tr)return t[i];
-        else {
-            int tm=(tl+tr)/2;
-            if(pos<=tm)return t[i]+sum(i*2,tl,tm,pos);
-            else return t[i]+sum(i*2+1,tm+1,tr,pos);
-        }
-    }
-
-    void update(int i, int tl, int tr, int l, int r, ll val){
-        if(l>r)return;
-
-        if(l==tl && tr==r)t[i]+=val;
-        else{
-            int tm=(tl+tr)/2;
-            update(i*2,tl,tm,l,min(r,tm),val);
-            update(i*2+1,tm+1,tr,max(l,tm+1),r,val);
-        }
-    }
-};
-
-void dfs(int node, int parent, ll sum){
-    static int counter=-1;
-    
-    psum[node]=sum+val[node];
-    start[node]=++counter;
-
-    for(auto child: adj[node]){
-        if(child==parent)continue;
-        dfs(child,node, psum[node]);
-    }
-
-    finish[node]=counter;
+    return p[a];
 }
+
+void join(ll a, ll b){
+    auto pa=parent(a);
+    auto pb=parent(b);
+
+    if(r[pa]>r[pb]){
+        p[pb]=pa;
+    }else if(r[pb]>r[pa]){
+        p[pa]=pb;
+    }else{
+        r[pa]++;
+        p[pb]=pa;
+    }
+}
+
 
 
 void solve() {
-    cin>>n>>q;
+    ll n,m;
+    cin>>n>>m;
 
-    for(int i=1;i<=n;i++)cin>>val[i];
-    for(int i=2;i<=n;i++){
-        ll a,b;
+    for(int i=0;i<s;i++)p[i]=i;
+
+    for(int i=0;i<m;i++){
+        int a,b;
         cin>>a>>b;
-        adj[a].push_back(b);
-        adj[b].push_back(a);
+        if(parent(a)!=parent(b))join(a,b);
     }
 
-    dfs(1,0,0);
-    arr.assign(n,0);
-    auto st=new ST(arr);
-
-    for(int i=0;i<q;i++){
-        ll type;
-        cin>>type;
-        if(type==1){
-            ll i,x;
-            cin>>i>>x;
-            st->update(1,0,n-1,start[i],finish[i],x-val[i]);
-        }else{
-            ll i;
-            cin>>i;
-            cout<<st->sum(1,0,n-1,start[i])+psum[i]<<endl;
+    int k=0;
+    vll ans;
+    for(int i=2;i<=n;i++){
+        if(parent(1)!=parent(i)){
+            join(1,i);
+            ans.push_back({1,i});
+            k++;
         }
     }
-    
+
+    cout<<k<<endl;
+    for(auto x: ans)printf("%lld %lld\n",x[0],x[1]);
 }
 
+// --------------------------------
+// shows WA for half the TC
+// --------------------------------
 int main() {
     FASTIO
     solve();
