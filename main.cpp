@@ -12,9 +12,31 @@ const ll mx = 1e9 + 7;
 const int s=2e5+5;
 int n,q;
 
-vl vis(s), p(s), lvl(s,s);
+vl color(s);
 vll adj(s);
 
+bool bfs(int root){
+    queue<ll> q;
+    q.push(root);
+    color[root]=1;
+
+    while(!q.empty()){
+        auto curr=q.front();
+        q.pop();
+
+        for(auto child: adj[curr]){
+            if(color[child]){
+                if(color[child]==color[curr]){
+                    return false;
+                }
+            }else{
+                q.push(child);
+                color[child]=3-color[curr];
+            }
+        }
+    }
+    return true;
+}
 
 void solve() {
     ll n,m;
@@ -27,41 +49,18 @@ void solve() {
         adj[b].push_back(a);
     }
 
-    queue<ll> q;
-    q.push(1);
-    p[1]=0;
-    lvl[1]=1;
-
-    while(!q.empty()){
-        auto curr=q.front();
-        q.pop();
-
-        if(vis[curr])continue;
-        vis[curr]=1;
-
-        for(auto child: adj[curr]){
-            if(vis[child])continue;
-            if(lvl[child]<=lvl[curr]+1)continue;
-            lvl[child]=lvl[curr]+1;
-            p[child]=curr;
-            q.push(child);
+    for(int i=1;i<=n;i++){
+        if(!color[i]){
+            if(!bfs(i)){
+                cout<<"IMPOSSIBLE"<<endl;
+                return;
+            }
         }
     }
 
-    if(lvl[n]==s){
-        cout<<"IMPOSSIBLE"<<endl;
-        return;
-    }
 
-    cout<<lvl[n]<<endl;
-    vl ans;
-    int node=n;
-    while(node!=0){
-        ans.push_back(node);
-        node=p[node];
-    }
 
-    for(auto itr=ans.rbegin();itr!=ans.rend();itr++)cout<<*itr<<" ";
+    for(int i=1;i<=n;i++)cout<<color[i]<<" ";
     cout<<endl;
 }
 
