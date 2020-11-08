@@ -12,30 +12,29 @@ const ll mx = 1e9 + 7;
 const int s=2e5+5;
 int n,q;
 
-vl color(s);
+vl ans;
 vll adj(s);
+map<int,int> mem;
 
-bool bfs(int root){
-    queue<ll> q;
-    q.push(root);
-    color[root]=1;
-
-    while(!q.empty()){
-        auto curr=q.front();
-        q.pop();
-
-        for(auto child: adj[curr]){
-            if(color[child]){
-                if(color[child]==color[curr]){
-                    return false;
-                }
-            }else{
-                q.push(child);
-                color[child]=3-color[curr];
-            }
+bool dfs(int node){
+    if(mem.count(node)){
+        if(ans.size()-mem[node]>=3){
+            vl temp;
+            for(int i=mem[node];i<ans.size();i++)temp.push_back(ans[i]);
+            ans=temp;
+            ans.push_back(node);
+            return true;
         }
+        return false;
     }
-    return true;
+    mem[node]=ans.size();
+    ans.push_back(node);
+
+    for(auto child: adj[node]){
+        if(dfs(child))return true;
+    }
+    ans.pop_back();
+    return false;
 }
 
 void solve() {
@@ -50,18 +49,17 @@ void solve() {
     }
 
     for(int i=1;i<=n;i++){
-        if(!color[i]){
-            if(!bfs(i)){
-                cout<<"IMPOSSIBLE"<<endl;
+        if(!mem.count(i)){
+            if(dfs(i)){
+                cout<<ans.size()<<endl;
+                for(auto x: ans)cout<<x<<" ";
+                cout<<endl;
                 return;
             }
         }
     }
 
-
-
-    for(int i=1;i<=n;i++)cout<<color[i]<<" ";
-    cout<<endl;
+    cout<<"IMPOSSIBLE"<<endl;
 }
 
 
