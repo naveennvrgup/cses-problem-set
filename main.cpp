@@ -1,7 +1,7 @@
 #include <bits/stdc++.h>
 using namespace std;
 #define FASTIO  ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
-
+ 
 typedef long long ll;
 typedef pair<ll, ll> pll;
 typedef vector<ll>  vl;
@@ -9,54 +9,61 @@ typedef vector<vl>  vll;
 typedef vector<vll>  vlll;
 typedef vector<char> vc;
 typedef vector<vc> vcc;
-
+ 
 const ll mx = 1e9 + 7;
-
-const int s=2e5+5;
-
+const ll inf=1e18;
+ 
+const ll s=5e3+5;
 ll n,m;
-vlll adj(s);
-vl dis(s),vis(s);
-priority_queue<vl,vll,greater<vl>> pq;
+vll e(s,vl(3));
+vl d(s,-inf);
+
+void printit(){
+    for(int i=1;i<=n;i++)cout<<d[i]<<" ";
+    cout<<endl;
+}
 
 void solve(){
     cin>>n>>m;
 
     for(int i=0;i<m;i++){
-        ll a,b,c;
-        cin>>a>>b>>c;
-        adj[a].push_back({b,c});
+        cin>>e[i][0]>>e[i][1]>>e[i][2];
     }
 
-    pq.push({0,1});
-    while(!pq.empty()){
-        auto curr=pq.top();
-        pq.pop();
-        ll node=curr[1];
-        ll cdis=curr[0];
+    d[1]=0;
 
-        if(vis[node])continue;
-        vis[node]=1;
-        dis[node]=cdis;
-
-        for(auto child: adj[node]){
-            if(vis[child[0]])continue;
-            pq.push({cdis+child[1],child[0]});
+    for(int k=0;k<n;k++){
+        vl temp=d;
+        for(int i=0;i<m;i++){
+            if(d[e[i][0]]==-inf)continue;
+            temp[e[i][1]]=max(temp[e[i][1]],d[e[i][0]]+e[i][2]);
         }
+        d=temp;
+        // printit();
     }
 
-    for(int i=1;i<=n;i++)cout<<dis[i]<<" ";
-    cout<<endl;
-}
+    int last=d[n];
+    for(int k=0;k<n;k++){
+        vl temp=d;
+        for(int i=0;i<m;i++){
+            if(d[e[i][0]]==-inf)continue;
+            if(temp[e[i][1]]<d[e[i][0]]+e[i][2])temp[e[i][1]]=inf;
+        }
+        d=temp;
+        // printit();
+    }
 
+    if(inf==d[n])cout<<-1<<endl;
+    else cout<<d[n]<<endl;
+}
 
 int main() {
     FASTIO
     solve();
-
+ 
 //    int t;
 //    cin>>t;
 //    while(t--)solve();
-
+ 
     return 0;
 }
