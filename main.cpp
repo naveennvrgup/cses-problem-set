@@ -1,70 +1,47 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define FASTIO  ios_base::sync_with_stdio(0);cin.tie(0);cout.tie(0);
+#define FASTIO  ios_base::sync_with_stdio(0);cin.tie(0);
+
 typedef long long ll;
 typedef pair<ll, ll> pll;
-typedef vector<ll>  vl;
-typedef vector<vl>  vll;
-typedef vector<vll>  vlll;
-typedef vector<char> vc;
-typedef vector<vc> vcc;
+typedef pair<int,int> pii;
+
 const ll mx = 1e9 + 7;
-const ll inf=1e18;
 
-const int s=2e5+5;
-ll n,m;
-vll adj;
-vl dis(s), p(s,-1);
+ll n;
 
+ll util(ll n){
+    ll n2=n*n,nm4=n-4;
+    ll res=n2*(n2-1)/2;
+
+    if(n==1)return 0;
+    if(n==2)return 6;
+    if(n==3)return 28;
+
+    res-=(nm4+2)*(nm4)*4;
+    res-=4+nm4*2;
+    res-=(nm4+2)*10;
+
+    return res;
+}
 
 void solve(){
-    cin>>n>>m;
+    cin>>n;
 
-    for(int i=0;i<m;i++){
-        ll a,b,c;
-        cin>>a>>b>>c;
-        adj.push_back({a,b,c});
-    }
-
-    ll e;
-    for(int i=0;i<n;i++){
-        e=-1;
-        for(auto x: adj){
-            if(dis[x[1]]>dis[x[0]]+x[2]){
-                dis[x[1]]=dis[x[0]]+x[2];
-                p[x[1]]=x[0];
-                e=x[1];
-            }
-        }
-    }
-
-    if(e==-1){
-        cout<<"NO"<<endl;
-        return;
-    }
-
-    for(int i=0;i<n;i++)e=p[e];
-    cout<<"YES"<<endl;
-    vl ans={e};
-    for(auto x=p[e];x!=e;x=p[x]){
-        ans.push_back({x});
-    }
-    ans.push_back(e);
-    reverse(ans.begin(),ans.end());
-
-    for(auto x: ans)cout<<x<<" ";
-    cout<<endl;
+    for(int i=1;i<=n;i++)cout<<util(i)<<endl;
 
 }
+
+
 
 
 int main() {
     FASTIO
     solve();
- 
+
 //    int t;
 //    cin>>t;
 //    while(t--)solve();
- 
+
     return 0;
 }
