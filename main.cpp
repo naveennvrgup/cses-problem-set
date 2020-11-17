@@ -8,28 +8,32 @@ typedef pair<int,int> pii;
 
 const ll mx = 1e9 + 7;
 
-ll n;
-
-ll util(ll n){
-    ll n2=n*n,nm4=n-4;
-    ll res=n2*(n2-1)/2;
-
-    if(n==1)return 0;
-    if(n==2)return 6;
-    if(n==3)return 28;
-
-    res-=(nm4+2)*(nm4)*4;
-    res-=4+nm4*2;
-    res-=(nm4+2)*10;
-
-    return res;
-}
 
 void solve(){
+    ll n;
     cin>>n;
 
-    for(int i=1;i<=n;i++)cout<<util(i)<<endl;
+    ll pos=n*(n+1)/2;
+    if(pos%2){
+        cout<<"NO"<<endl;
+        return;
+    }
+    cout<<"YES"<<endl;
+    pos/=2;
 
+    vector<ll> a,b;
+    for(int i=n;i>=1;i--){
+        if(pos-i>=0){
+            b.push_back(i);
+            pos-=i;
+        }else a.push_back(i);
+    }
+
+    cout<<a.size()<<endl;
+    for(auto x: a)cout<<x<<" ";
+    cout<<endl<<b.size()<<endl;
+    for(auto x:b)cout<<x<<" ";
+    cout<<endl;
 }
 
 
