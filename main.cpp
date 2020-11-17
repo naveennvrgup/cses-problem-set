@@ -5,38 +5,47 @@ using namespace std;
 typedef long long ll;
 typedef pair<ll, ll> pll;
 typedef pair<int,int> pii;
+typedef vector<ll> vl;
+typedef vector<vl> vll;
 
 const ll mx = 1e9 + 7;
+vector<vector<char>> board(8,vector<char>(8,'.'));
+ll res;
+vl row(8),col(8),ld(20),fd(20);
 
-
-void solve(){
-    ll n;
-    cin>>n;
-
-    ll pos=n*(n+1)/2;
-    if(pos%2){
-        cout<<"NO"<<endl;
+void util(int i){
+    if(i==8){
+        res++;
         return;
     }
-    cout<<"YES"<<endl;
-    pos/=2;
 
-    vector<ll> a,b;
-    for(int i=n;i>=1;i--){
-        if(pos-i>=0){
-            b.push_back(i);
-            pos-=i;
-        }else a.push_back(i);
+    for(int j=0;j<8;j++){
+        if(board[i][j]=='*')continue;
+        if(row[i] || col[j] || ld[i-j+10] || fd[i+j])continue;
+
+        row[i]=1;
+        col[j]=1;
+        ld[i-j+10]=1;  
+        fd[i+j]=1;
+        
+        util(i+1);
+        
+        row[i]=0;
+        col[j]=0;
+        ld[i-j+10]=0;  
+        fd[i+j]=0;
     }
-
-    cout<<a.size()<<endl;
-    for(auto x: a)cout<<x<<" ";
-    cout<<endl<<b.size()<<endl;
-    for(auto x:b)cout<<x<<" ";
-    cout<<endl;
 }
 
+void solve(){
+    res=0;
+    for(int i=0;i<8;i++){
+        for(int j=0;j<8;j++)cin>>board[i][j];
+    }
 
+    util(0);
+    cout<<res<<endl;
+}
 
 
 int main() {
